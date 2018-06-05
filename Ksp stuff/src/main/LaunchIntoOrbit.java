@@ -1,4 +1,5 @@
 package main;
+
 import java.io.IOException;
 
 import org.javatuples.Triplet;
@@ -57,8 +58,11 @@ public class LaunchIntoOrbit {
 		double turnAngle = 0;
 		while (true) {
 
+			System.out.println("Entering main ascent loop");
+
 			// Gravity turn
 			if (altitude.get() > turnStartAltitude && altitude.get() < turnEndAltitude) {
+				System.out.println("Gravity turn");
 				double frac = (altitude.get() - turnStartAltitude) / (turnEndAltitude - turnStartAltitude);
 				double newTurnAngle = frac * 90.0;
 				if (Math.abs(newTurnAngle - turnAngle) > 0.5) {
@@ -86,6 +90,7 @@ public class LaunchIntoOrbit {
 		// Disable engines when target apoapsis is reached
 		vessel.getControl().setThrottle(0.25f);
 		while (apoapsis.get() < targetAltitude) {
+
 		}
 		System.out.println("Target apoapsis reached");
 		vessel.getControl().setThrottle(0);
@@ -93,6 +98,7 @@ public class LaunchIntoOrbit {
 		// Wait until out of atmosphere
 		System.out.println("Coasting out of atmosphere");
 		while (altitude.get() < 70500) {
+
 		}
 
 		// Plan circularization burn (using vis-viva equation)
@@ -129,15 +135,20 @@ public class LaunchIntoOrbit {
 		// Execute burn
 		System.out.println("Ready to execute burn");
 		Stream<Double> timeToApoapsis = connection.addStream(vessel.getOrbit(), "getTimeToApoapsis");
+
 		while (timeToApoapsis.get() - (burnTime / 2.0) > 0) {
+
 		}
+
 		System.out.println("Executing burn");
 		vessel.getControl().setThrottle(1);
 		Thread.sleep((int) ((burnTime - 0.1) * 1000));
 		System.out.println("Fine tuning");
 		vessel.getControl().setThrottle(0.05f);
 		Stream<Triplet<Double, Double, Double>> remainingBurn = connection.addStream(node, "remainingBurnVector", node.getReferenceFrame());
+
 		while (remainingBurn.get().getValue1() > 0) {
+
 		}
 		vessel.getControl().setThrottle(0);
 		node.remove();
